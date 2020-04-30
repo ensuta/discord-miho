@@ -1,6 +1,8 @@
-const Discord = require('discord.js');
-const client = new Discord.Client();
+const {Client, MessageAttachment} = require('discord.js');
+const fetch = require("node-fetch");
+const ytdl = require("ytdl-core");
 const token = require("./token.json");
+const client = new Client();
 const badwords = /words|to|block/gi;
 
 
@@ -65,12 +67,6 @@ client.on('message', msg => {
             return msg.reply("바르고 고운 말 사용하는거예요!");
         }
 
-        // If user typed nothing
-        if (content === "") {
-            const ranCat = files[pickRandom(gifCategory)];
-            msg.channel.send(pickImg(ranCat));
-        }
-
         // Help
         else if (content === "도와줘") {
             msg.channel.send("[미호아 or 호아] [명령어] 구조로 이루어져 있는 것이예요.\n말해 [문자] : 봇이 한 말을 따라 하는 것이예요. 마지막에 -지워를 붙이면 해당 메시지를 지우고 따라 하는 거예요.\n날씨 : 기상청에서 받은 중기예보를 알려주는 거예요.\n게임 : 주사위, 동전, 가위바위보\n제비뽑기 [@유저] : 유저 중 한 명만 당첨되는 거예요. 반드시 2인 이상 언급해야 하는 거예요.")
@@ -79,15 +75,9 @@ client.on('message', msg => {
         // Greeting, Farewell
         else if (content === "안녕") {
             msg.react("안녕하셨어요?")
-            .then(() => {
-                msg.channel.send(pickImg(files.hi));
-            })
         }
         else if (content === "잘 가" || content === "잘가") {
             msg.react("안녕히 주무시는 거예요")
-            .then(() => {
-                msg.channel.send(pickImg(files.bye));
-            })
         }
 
 		// Info
