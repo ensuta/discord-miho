@@ -1,4 +1,4 @@
-const {Client, MessageAttachment} = require('discord.js');
+const Client = require('discord.js');
 const fetch = require("node-fetch");
 const ytdl = require("ytdl-core");
 const token = require("./token.json");
