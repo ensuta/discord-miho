@@ -1,27 +1,162 @@
-const Client = require('discord.js');
+const {Client, MessageAttachment} = require('discord.js');
+const axios = require("axios");
 const fetch = require("node-fetch");
+const crypto = require("crypto");
 const ytdl = require("ytdl-core");
+const fs = require("fs");
+const math = require("mathjs");
 const token = require("./token.json");
+const files = require("./files.json");
 const client = new Client();
+const encryptKey = 'aDogWlsHxuRWLMwz5zkVguZboXn9CXYJ';
+const blacklist = [];
 const badwords = /words|to|block/gi;
 
+let latestInsta = null;
 
-client.on('ready', () => {
-	console.log('Logged in as ${client.user.tag}!');
-});
+const pickRandom = array => {
+    return array[Math.round(Math.random() * (array.length - 1))];
+};
+const pickImg = array => {
+    return pickRandom(array).replace("[gfy]", "https://giant.gfycat.com/").replace("[zgfy]", "https://zippy.gfycat.com/").replace("[ten]", "https://tenor.com/view/").replace("[fgfy]", "https://fat.gfycat.com/").replace("[tgfy]", "https://thumbs.gfycat.com/");
+};
+const quickSort = (arr, l, r) => {
+    let i;
+
+    (l < r) &&
+    (
+        i =  partition(arr, l, r),
+
+        quickSort(arr, l, i - 1),
+        quickSort(arr, i + 1, r)
+    )
+
+    return arr
+};
+const partition = (arr, l, r) => {
+    let i = l,
+        j = r,
+        pivot = arr[l];
+
+    while (i < j)
+    {
+        while (arr[j] > pivot) j--;
+        while (i < j && arr[i] <= pivot) i++;
+        tmp = arr[i], arr[i] = arr[j], arr[j] = tmp
+    }
+    return arr[l] = arr[j], arr[j] = pivot, j
+};
+const parse = raw => {
+    try {
+        return JSON.parse(raw);
+    }
+    catch (err) {
+        return false;
+    }
+};
+const fetchInsta = action => {
+    axios
+    .get("https://www.instagram.com/asdf")
+    .then(response => {
+        const a = response.data;
+        const media = JSON.parse(a.slice(a.indexOf("edge_owner_to_timeline_media") + 30, a.indexOf("edge_saved_media") - 2));
+        const latest = media.edges[0].node;
+
+        if (action === "init") {
+            latestInsta = latest.id
+        }
+        else if (action === "check") {
+            if (latestInsta && latestInsta !== latest.id) {
+                latestInsta = latest.id,
+                fs.readFile("./channel.txt", "utf8", function(err, data) {
+                    if (err) return console.log(err);
+                    const channels = data.split("!!");
+                    const comment = latest.edge_media_to_caption.edges[0].node.text;
+
+                    if (latest.is_video) {
+                        fetch(`https://www.instagram.com/p/${latest.shortcode}/`)
+                        .then(response => {
+                            if (response.status === 200) {
+                                return response.text()
+                            }
+                            else {
+                                return false
+                            }
+                        })
+                        .then(a => {
+                            const attachment = new MessageAttachment(a.slice(a.indexOf("video_url") + 12, a.indexOf("video_view_count") - 3).replace(/\\u0026/gm, "&"));
+
+                            channels.forEach(channel => {
+                                const id = channel.replace(/<|#|>/g, "");
+                                client.channels.cache.get(id).send(attachment)
+                                .then(() => {
+                                    client.channels.cache.get(id).send(`>>> ${comment}\n https://www.instagram.com/p/${latest.shortcode}`)
+                                })
+                            })
+                        })
+                    }
+                    else {
+                        const attachment = new MessageAttachment(latest.display_url);
+
+                        channels.forEach(channel => {
+                            const id = channel.replace(/<|#|>/g, "");
+                            client.channels.cache.get(id).send(attachment)
+                            .then(() => {
+                                client.channels.cache.get(id).send(`>>> ${comment}\n https://www.instagram.com/p/${latest.shortcode}`)
+                            })
+                        })
+                    }
+                })
+            }
+        }
+    })
+    .catch(err => {
+        console.log(err);
+    })
+};
+const encrypt = text => {
+    let iv = crypto.randomBytes(16);
+    let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(encryptKey), iv);
+    let encrypted = cipher.update(text);
+
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+
+    return iv.toString('hex') + ':' + encrypted.toString('hex');
+};
+const decrypt = text => {
+    let textParts = text.split(':');
+    let iv = Buffer.from(textParts.shift(), 'hex');
+    let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+    let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(encryptKey), iv);
+    let decrypted = decipher.update(encryptedText);
+
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+
+    return decrypted.toString();
+};
 
 client.on("ready", () => {
     console.log(`Logged in : ${client.user.tag}`);
     client.user.setPresence({
         activity: {
-            name: "미호야 도와줘"
+            name: "미호야 도와줘 - 명령어 확인"
         }
     });
+    
+    fetchInsta("init"),
 
-client.on('message', msg => {
-	if(msg.author.bot) return;
+    setInterval(() => {
+        fetchInsta("check")
+    }, 1800000)
+});
+
+client.on("message", msg => {
+    if(msg.author.bot) return;
     let content = msg.content;
     
+    if (content.startsWith("!!") && msg.author.id === "285671139110420490") {
+        content = content.slice(2);
+        split = content.split(" ");
         if (content.startsWith("guild")) {
             if (split[1] === "length") {
                 msg.reply(client.guilds.cache.size);
@@ -67,33 +202,138 @@ client.on('message', msg => {
             return msg.reply("바르고 고운 말 사용하는거예요!");
         }
 
+        // If user typed nothing
+        if (content === "") {
+            const ranCat = files[pickRandom(gifCategory)];
+            msg.channel.send(pickImg(ranCat));
+        }
+
         // Help
         else if (content === "도와줘") {
-            msg.channel.send("[미호아 or 호아] [명령어] 구조로 이루어져 있는 것이예요.\n말해 [문자] : 봇이 한 말을 따라 하는 것이예요. 마지막에 -지워를 붙이면 해당 메시지를 지우고 따라 하는 거예요.\n날씨 : 기상청에서 받은 중기예보를 알려주는 거예요.\n게임 : 주사위, 동전, 가위바위보\n제비뽑기 [@유저] : 유저 중 한 명만 당첨되는 거예요. 반드시 2인 이상 언급해야 하는 거예요.")
-        } 
+            msg.channel.send("[미호야 or 호야] [명령어] 구조로 이루어져 있는거예요.\n말해 [문자] : 봇이 한 말을 따라 하는거예요. 마지막에 -지워를 붙이면 해당 메시지를 지우고 따라 하는거예요\n정렬해줘 [배열] : Quick Sort로 배열을 정렬해주는거예요.\n[내쫓아 or 밴] [@유저] [문자(밴 사유, 선택)] : 순서대로 kick, ban인 거예요.\n역할 [행동(추가 / 삭제)] [@유저] [역할 이름] : 유저의 역할을 관리하는거예요\n인스타 [n번째(생략 가능)] : 인스타그램을 게시글을 표시해주는거예요. 마지막에 (숫자)번째를 추가하면 해당 게시물을 보여주는거예요.\n유튜브 : 유튜브를 켜주는거예요.\n타이머 [시간(n시간 n분 n초)] : 설정한 시간 뒤에 알림을 보내주는거예요.\n암호 [행동(생성 / 해독)] [문자열] : 문자열을 암호화, 복화화해주는거예요.\n날씨 : 기상청에서 받은 중기예보를 알려주는거예요.\n랜덤 [최소 숫자] [최대 숫자] : 최소 숫자와 최대 숫자 사이의 수 중 하나를 무작위로 뽑아주는거예요.\n계산 [수식] : 해당 수식을 계산해주는거예요.\n(단위변환 or 단위 변환) [변환할 항목] [단위] : 단위를 변환해주는거예요. 변환할 항목엔 숫자와 단위, 단위엔 단위만 입력하시면 되는거예요.\n소수 [숫자](번째) : [숫자]번째 소수를 알려줄꺼예요.\n게임 : 주사위, 동전, 가위바위보\n제비뽑기 [@유저] : 유저 중 한 명만 당첨되는 거예요. 반드시 2인 이상 언급해야 하는거예요."
+		}
 
         // Greeting, Farewell
         else if (content === "안녕") {
-            msg.react("안녕하셨어요?")
+            msg.react("안녕하신거예요")
+            .then(() => {
+                msg.channel.send(pickImg(files.hi));
+            })
         }
         else if (content === "잘 가" || content === "잘가") {
-            msg.react("안녕히 주무시는 거예요")
+            msg.react("잘 가는거예요")
+            .then(() => {
+                msg.channel.send(pickImg(files.bye));
+            })
         }
 
-		// Info
-        else if (content.startsWith("자기소개")) {
-            msg.reply("이름은 미호! /n성별은 여성인 것이예요 /n나쁜 생각은 안돼는 것이예요");
+
+        // notification
+        else if (content.startsWith("알림")) {
+            const splitted = content.split(" ");
+            let action = splitted[1];
+
+            if (action === "추가") {
+                if (splitted[2]) {
+                    let channel = splitted[2].match(/<#(.[0-9]+)>/g);
+                    if (!channel) {return msg.reply("올바른 채널을 입력해주시는거예요.");}
+                    const path = "./channel.txt";
+                    channel = channel[0].replace(/<|#|>/g, "");
+    
+                    try {
+                        if (fs.existsSync(path)) {
+                            fs.appendFile(path, `!!${channel}`, function (err) {
+                                if (err) {
+                                    console.log(err),
+                                    msg.reply("채널 추가에 실패했어요오~ 😢");
+                                    return;
+                                };
+                                console.log(`new channel saved${channel}`),
+                                client.channels.cache.get(channel).send(`성공적으로 알림 채널로 등록한거예요!\n채널 ID : ${channel}`)
+                                .then(() => {
+                                    msg.reply("완료!")
+                                })
+                            });
+                        }
+                        else {
+                            fs.writeFile(path, channel, function (err) {
+                                if (err) {
+                                    console.log(err),
+                                    msg.reply("채널 추가에 실패했어요오~ 😢");
+                                    return;
+                                };
+                                console.log(`new channel saved${channel}`),
+                                client.channels.cache.get(channel).send(`성공적으로 알림 채널로 등록했어요.\n채널 ID : ${channel}`)
+                                .then(() => {
+                                    msg.reply("완료!")
+                                })
+                            });
+                        }
+                    }
+                    catch (err) {
+                        console.log(err);
+                        msg.reply("채널 추가에 실패했어요오~ 😢")
+                    }
+                }
+                else {
+                    msg.reply("올바른 채널을 입력해주시는거예요")
+                }
+            }
         }
-		
-		// Music
+
+        // Info
+        else if (content.startsWith("자기소개")) {
+            msg.reply("이름은 미호 /n 이상한 생각은 안되는거예요!");
+        }
+        else if (content.startsWith("사이트")) {
+            axios
+            .get("http://jeonkkochbi.tk/")
+            .then(response => {
+                const a = response.data;
+                const media = JSON.parse(a.slice(a.indexOf("edge_owner_to_timeline_media") + 30, a.indexOf("edge_saved_media") - 2));
+                let target = content.split(" ")[1];
+
+                target && (target = target.replace("번째", "").replace("번쨰", "")),
+                +target ? (target =  --target) : (target = 0);
+
+                const targetPost = media.edges[`${target ? target > 11 ? 11 : target : 0}`].node;
+                const targetPostComment = targetPost.edge_media_to_caption.edges[0].node.text;
+
+                if (targetPost.is_video) {
+                    axios
+                    .get(`https://www.instagram.com/p/${targetPost.shortcode}/`)
+                    .then(response => {
+                        const a = response.data;
+                        const attachment = new MessageAttachment(a.slice(a.indexOf("video_url") + 12, a.indexOf("video_view_count") - 3).replace(/\\u0026/gm, "&"));
+
+                        msg.channel.send(attachment)
+                        .then(() => {
+                            msg.channel.send(`>>> ${targetPostComment}`);
+                        })
+                    })
+                }
+                else {
+                    const attachment = new MessageAttachment(targetPost.display_url);
+                    msg.channel.send(attachment)
+                    .then(() => {
+                        msg.channel.send(`>>> ${targetPostComment}`);
+                    })
+                }
+            });            
+        }
+        else if (content === "유튜브") {
+            msg.channel.send("https://www.youtube.com/");
+        }
+        
+        // Music
         else if (content.startsWith("재생해줘")) {
             const uri = content.split(" ")[1];
-            if (!uri) return msg.reply("재생할 주소를 입력해주셔야 되는 것이예요.");
+            if (!uri) return msg.reply("재생할 주소를 입력해주시는거예요.");
     
             const voiceChannel = msg.member.voice.channel;
     
             if (!voiceChannel) {
-                return msg.reply("음성 채팅방에 들어가셔야 재생할 수 있어요오~");
+                return msg.reply("음성 채팅방에 들어가셔야 재생할 수 있는거예요.");
             }
     
             voiceChannel.join().then(connection => {
@@ -103,8 +343,8 @@ client.on('message', msg => {
                 dispatcher.on("end", () => voiceChannel.leave());
             });
         }
-		
-		// Extra Functions
+
+        // Extra Functions
         else if (content.startsWith("말해")) {
             if (content.split(" ").length >= 2) {
                 if (content.slice(-3) === "-지워") {
@@ -114,7 +354,7 @@ client.on('message', msg => {
                             msg.delete();
                         }
                         catch(err) {
-                            msg.channel.send("메시지 삭제 권한을 부여받지 못한거예요... \n링크를 통해 봇을 추가하시면 문제가 해결됩니다.");
+                            msg.channel.send("메시지 삭제 권한을 부여받지 못한거예요. \n링크를 통해 봇을 추가하시면 문제가 해결돼요.");
                         }
                     })
                 }
@@ -123,11 +363,146 @@ client.on('message', msg => {
                 }
             }
             else {
-                msg.reply("``미호아 말해 [말할 내용]``이 올바른 사용법인거예요.")
+                msg.reply("``지은아 말해 [말할 내용]``이 올바른 사용법인 거예요.")
             }
         }
-		
-		// weather
+        else if (content === "집합시켜") {
+            msg.channel.send(`@everyone ${author}님이 집합하시랍니다!`)
+        }
+        else if (content.startsWith("정렬해줘")) {
+            const arrRegex = content.match(/\[(.*)\]/g);
+            if (arrRegex) {
+                const array = arrRegex[0];
+                const start = new Date().getTime();
+                const parsed = parse(array) ;
+
+                if (parsed) {
+                    const sorted = quickSort(parsed, 0, parsed.length - 1);
+                    msg.reply(`[${sorted}]\n정렬하는데 \`\`${new Date().getTime() - start}ms\`\`가 소요되는거예요.`);
+                }
+                else {
+                    msg.reply("정렬할 수 없는 배열인 거예요 😥")
+                }
+            }
+            else {
+                msg.reply("``지은아 정렬해줘 [배열]``로 정렬할 수 있는거예요.")
+            }
+        }
+        else if (content.startsWith("암호")) {
+            const split = content.split(" ");
+            const action = split[1];
+
+            if (action === "생성") {
+                msg.reply(encrypt(split.slice(2).join(" ")));
+            }
+            else if (action === "해독") {
+                try {
+                    msg.reply(decrypt(split[2]));
+                }
+                catch(err) {
+                    msg.reply("복호화에 실패한거예요. 😥")
+                }
+            }
+            else {
+                msg.reply("암호 [행동(생성, 해독)] [문자열]로 암호를 생성하고 해독할 수 있는거예요")
+            }
+        }
+        else if (content.startsWith("타이머")) {
+            const time = content.replace("타이머 ", "").split(" ");
+            const regex = /^([0-9]+)(분|초|시간)$/;
+            const timeToMs = (time, unit) => {
+                return `${unit === "시간" ? time*3600000 : unit === "분" ? time*60000 : unit === "초" ? time*1000 : false}`
+            };
+            try {
+                let result = 0;
+                time.forEach(time => {
+                    const match = time.match(regex);
+                    result += +timeToMs(match[1], match[2])
+                })
+                if (result > 10800000) return msg.reply("3시간 이하로 설정해주세요!");
+                msg.reply(`${result/1000}초 뒤에 알려드리는거예요! ⏲️`)
+                .then(() => {
+                    setTimeout(() => {
+                        msg.reply("시간, 다 된거예요! 🔔")
+                    }, result)
+                })
+            }
+            catch (err) {
+                msg.reply("올바른 시간을 입력해주셔야 하는거예요.")
+            }
+        }
+        else if (content === "잘 자" || content === "잘자") {
+            msg.reply("안녕히 주무시는거예요 \n https://youtube.com/")
+        }
+
+        // math
+        else if (content.startsWith("랜덤")) {
+            const split = content.split(" ");
+            const min = +split[1];
+            const max = +split[2];
+            if (split.length === 3 && min !== NaN && max !== NaN && max > min) {
+                msg.reply(Math.round(Math.random() * (max - min)) + min)
+            }
+            else {
+                msg.reply("``지은아 랜덤 [최소 숫자] [최대 숫자]``가 올바른 사용법인거예요.")
+            }
+        }
+        else if (content.startsWith("계산")) {
+            content = content.slice(3)
+            if (content) {
+                try {
+                    const result = math.evaluate(content);
+                    const resStr = math.format(result, {precision: 14});
+                    const type = typeof(result);
+                    if (type === "function") {
+                        throw "error";
+                    }
+                    msg.reply(resStr);
+                }
+                catch (err) {
+                    msg.reply("올바른 수식을 입력해주시는거예요.");
+                }
+            }
+            else {
+                msg.reply("``지은아 계산 [수식]``이 올바른 사용법인거예요.");
+            }
+        }
+        else if (content.startsWith("단위변환") || content.startsWith("단위 변환")) {
+            const split = content.replace("단위 변환", "단위변환").split(" ");
+            if (split.length === 3) {
+                try {
+                    msg.reply(math.format(math.evaluate(`${split[1]} to ${split[2]}`)), {precision: 14});
+                }
+                catch (err) {
+                    msg.reply("올바른 단위를 입력해주시는거예요.");
+                }
+            }
+            else {
+                msg.reply("``지은아 (단위변환 or 단위 변환) [변환할 항목] [단위]``가 올바른 사용법이 되는거예요.");
+            }
+        }
+        else if (content.startsWith("소수")) {
+            const input = content.split(" ")[1];
+            let num = input ? input.replace("번째", "") : null;
+            if (num && +num) {
+                num -= 1;
+                fs.readFile("./prime.txt", (err, data) => {
+                    if (err) throw err;
+                    data = data.toString().split(" ")[num];
+                    if (data) {
+                        msg.reply(data)
+                    }
+                    else {
+                        msg.reply("적당한 숫자를 입력해주셔야 하는거예요. 😥");
+                    }
+                });
+            }
+            else {
+                msg.reply("``지은아 소수 [숫자](번째)``가 올바른 사용법인거예요.");
+            }
+        }
+
+        // weather
         else if (content === "날씨") {
             const date = () => {
                 const now = new Date();
@@ -138,7 +513,7 @@ client.on('message', msg => {
 
                 if (now.getHours() <= 6) {
                     now.setDate(now.getDate() - 1);
-                    // hhmm = "1800"
+                    hhmm = "1800"
                 }
 
                 const month = now.getMonth() + 1;
@@ -156,19 +531,17 @@ client.on('message', msg => {
                 msg.channel.send(data.response.body.items.item[0].wfSv)
             })
         }
-			
-		 // mini games
+
+        // mini games
         else if (content === "주사위") {
             const result = Math.floor(Math.random() * 5 + 1);
             msg.reply(`${result === 1 ? "⚀ (1)" : result === 2 ? "⚁ (2)" : result === 3 ? "⚂ (3)" : result === 4 ? "⚃ (4)" : result === 5 ? "⚄ (5)" : "⚅ (6)"}`);
         }
-        
-		else if (content === "동전") {
+        else if (content === "동전") {
             const result = Math.round(Math.random());
             msg.reply(`${result ? "앞" : "뒤"}`);
         }
-        
-		else if (content === "가위바위보") {
+        else if (content === "가위바위보") {
             const arr = ["✊", "✌️", "✋"];
             const choose = Math.round(Math.random() * 2);
             const filter = (reaction, user) => {
@@ -180,7 +553,7 @@ client.on('message', msg => {
 		        msg.react("✌️"),
 		        msg.react("✋"),
             ])
-            .catch(() => msg.reply("다음에 하고 싶은거예요"));
+            .catch(() => msg.reply("다음에 다시 결판 짓는 거예요!"));
 
             msg.awaitReactions(filter, { max: 1, time: 10000, errors: ["time"] })
 	        .then(collected => {
@@ -189,29 +562,28 @@ client.on('message', msg => {
                     reaction.emoji.name === "✊"
                     ?
                         choose === 0
-                        ? "✊ 비긴거예요 😏"
+                        ? "✊ 비겼네요 😏"
                         : choose === 1
-                            ? "✌️ 내가 지다니... 😥"
-                            : "✋ 제가 이긴거예요!! 😁"
+                            ? "✌️ 제가 진거예요 😥"
+                            : "✋ 제가 이긴거예요 😁"
                     : reaction.emoji.name === "✌️"
                         ?
                             choose === 0
-                            ? "✊ 제가 이긴거예요!! 😁"
+                            ? "✊ 제가 이긴거예요 😁"
                             : choose === 1
-                                ? "✌️ 비긴거예요 😏"
-                                : "✋ 내가 지다니... 😥"
+                                ? "✌️ 비겼네요 😏"
+                                : "✋ 제가 진거예요 😥"
                         :
                             choose === 0
-                            ? "✊ 내가 지다니... 😥"
+                            ? "✊ 제가 진거예요 😥"
                             : choose === 1
-                                ? "✌️ 제가 이긴거예요!! 😁"
-                                : "✋ 비긴거예요 😏"
+                                ? "✌️ 제가 이긴거예요 😁"
+                                : "✋ 비겼네요 😏"
                 }`);
                 
 	        });
         }
-        
-		else if (content.startsWith("제비뽑기")) {
+        else if (content.startsWith("제비뽑기")) {
             const users = msg.mentions.users;
             const size = users.size;
             
@@ -226,36 +598,134 @@ client.on('message', msg => {
                 msg.channel.send(`당첨! 🎉<@${random[0]}>🎉`)
             }
         }
-		
-		else if (content.startsWith("타이머")) {
-            const time = content.replace("타이머 ", "").split(" ");
-            const regex = /^([0-9]+)(분|초|시간)$/;
-            const timeToMs = (time, unit) => {
-                return `${unit === "시간" ? time*3600000 : unit === "분" ? time*60000 : unit === "초" ? time*1000 : false}`
-            };
-            try {
-                let result = 0;
-                time.forEach(time => {
-                    const match = time.match(regex);
-                    result += +timeToMs(match[1], match[2])
-                })
-                if (result > 10800000) return msg.reply("3시간 이하로 설정해주시는거예요!");
-                msg.reply(`${result/1000}초 뒤에 알려드릴게요오~ ⏲️`)
-                .then(() => {
-                    setTimeout(() => {
-                        msg.reply("띠리리링 🔔")
-                    }, result)
-                })
+
+        // Moderation
+        else if (content.startsWith("역할")) {
+            if (!user) return msg.reply("누굴요?");
+
+            if (member) {
+                const split = content.split(" ");
+                const action = split[1];
+                if (!action || !split[2] || !split[3]) return msg.reply("역할 [행동(추가 / 삭제)] [@유저] [역할 이름]으로 사용하실 수 있어요.");
+                const role = msg.guild.roles.cache.find(role => role.name === split.slice(3).join(" "));
+                if (!role) return msg.reply("그런 역할은 없는거예요. 😥");
+
+                if (action === "추가") {
+                    if (member.roles.cache.has(role.id)) {
+                        msg.reply("이미 역할이 부여되어있네요.")
+                    }
+                    else {
+                        member.roles.add(role.id)
+                        .then(() => {
+                            msg.channel.send(`축하합니다! ${split[2]} 님! \`\`${role.name}\`\` 역할을 부여받았어요!`)
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            msg.reply("역할 부여에 실패한 거예요. 😥");
+                        })
+                    }
+                }
+                if (action === "삭제") {
+                    if (member.roles.cache.has(role.id)) {
+                        member.roles.remove(role.id)
+                        .then(() => {
+                            msg.channel.send(`${split[2]} 님에게서 \`\`${role.name}\`\` 역할을 삭제한 거예요.`)
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            msg.reply("역할 삭제에 실패한 거예요. 😥");
+                        })
+                    }
+                    else {
+                        msg.reply("그런 역할은 부여되어 있지 않네요.")
+                    }
+                }
+                if (action === "확인") {
+
+                }
             }
-            catch (err) {
-                msg.reply("올바른 시간을 입력해주시는거예요")
+            else {
+                msg.reply("그런 사람은 없어요. 😥")
             }
         }
-        
-		
-		//EasterEgg
-		else (content.startWith("마법주문 엄준식")) {
-			msg.channel.send("엄/n준/n식")
-		}
-		
+        else if (content.startsWith("밴") || content.startsWith("내쫓아")) {
+            if (user) {
+                const reason = content.match(/ /g)[1];
+                if (member) {
+                    if (content.startsWith("밴")) {
+                        msg.reply("정말 진행하시는거예요?\n응 혹은 ㅇㅇ을 입력하시면 계속 진행하는 거예요?!")
+                        .then(() => {
+                            const filter = m => msg.author.id === m.author.id;
+
+                            msg.channel.awaitMessages(filter, { time: 10000, max: 1, errors: ['time'] })
+                            .then(reply => {
+                                const result = reply.first().content;
+                                if (result === "응" || result === "ㅇㅇ") {
+                                    member
+                                    .ban({
+                                        reason: `${reason ? message.slice(message.lastIndexOf(" ")+1) : "나빴어"}`
+                                    })
+                                    .then(() => {
+                                        msg.reply(`${user.tag}을(를) 밴한 거예요.`)
+                                    })
+                                    .catch(() => {
+                                        msg.reply("이 사람은 밴할 수 없는 거예요.")
+                                    })
+                                }
+                                else {
+                                    msg.reply("작업을 취소할께요.")
+                                }
+                            })
+                            .catch(() => {
+                                msg.reply("대답하지 않으셨으니 없던 일로 하는거예요.")
+                            })
+                        })
+                    }
+                    else {
+                        msg.reply("정말 진행하시는거예요?\n응 혹은 ㅇㅇ을 입력하시면 계속 진행하는 거예요?!")
+                        .then(() => {
+                            const filter = m => msg.author.id === m.author.id;
+
+                            msg.channel.awaitMessages(filter, { time: 10000, max: 1, errors: ['time'] })
+                            .then(reply => {
+                                const result = reply.first().content;
+                                if (result === "응" || result === "ㅇㅇ") {
+                                    member
+                                    .kick({
+                                        reason: `${reason ? message.slice(message.lastIndexOf(" ")+1) : "나빴어"}`
+                                    })
+                                    .then(() => {
+                                        msg.reply(`${user.tag}을(를) 내쫓은거예요.`)
+                                    })
+                                    .catch(() => {
+                                        msg.reply("이 사람은 내쫓을 수 없는거예요.")
+                                    })
+                                }
+                                else {
+                                    msg.reply("작업을 취소합니다.")
+                                }
+                            })
+                            .catch(() => {
+                                msg.reply("대답하지 않으셨으니 없던 일로 하는 거예요.")
+                            })
+                        })
+                    }
+                }
+                else {
+                    msg.reply("찾을 수 없는거예요 . 😥")
+                }
+            }
+            else {
+                msg.reply("누굴요?")
+            }
+        }
+        else {
+            msg.react("❌")
+            .then(() => {
+                msg.reply("찾을 수 없는 명령어네요. 😥\n``미호아 도와줘`` 명령어를 이용해 명령어 목록을 확인할 수 있는거예요.");
+            })
+        }
+    }
+});
+
 client.login(token.token);
