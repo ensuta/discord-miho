@@ -138,7 +138,7 @@ client.on('message', msg => {
 
                 if (now.getHours() <= 6) {
                     now.setDate(now.getDate() - 1);
-                    hhmm = "1800"
+                    // hhmm = "1800"
                 }
 
                 const month = now.getMonth() + 1;
@@ -254,7 +254,7 @@ client.on('message', msg => {
         
 		
 		//EasterEgg
-		else if (content.startWith("마법주문 엄준식")) {
+		else (content.startWith("마법주문 엄준식")) {
 			msg.channel.send("엄/n준/n식")
 		}
 		
