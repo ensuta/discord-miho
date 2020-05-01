@@ -1,5 +1,4 @@
 const {Client, MessageAttachment} = require('discord.js');
-const axios = require("axios");
 const fetch = require("node-fetch");
 const crypto = require("crypto");
 const ytdl = require("ytdl-core");
@@ -54,66 +53,8 @@ const parse = raw => {
         return false;
     }
 };
-const fetchInsta = action => {
-    axios
-    .get("https://www.instagram.com/asdf")
-    .then(response => {
-        const a = response.data;
-        const media = JSON.parse(a.slice(a.indexOf("edge_owner_to_timeline_media") + 30, a.indexOf("edge_saved_media") - 2));
-        const latest = media.edges[0].node;
 
-        if (action === "init") {
-            latestInsta = latest.id
-        }
-        else if (action === "check") {
-            if (latestInsta && latestInsta !== latest.id) {
-                latestInsta = latest.id,
-                fs.readFile("./channel.txt", "utf8", function(err, data) {
-                    if (err) return console.log(err);
-                    const channels = data.split("!!");
-                    const comment = latest.edge_media_to_caption.edges[0].node.text;
 
-                    if (latest.is_video) {
-                        fetch(`https://www.instagram.com/p/${latest.shortcode}/`)
-                        .then(response => {
-                            if (response.status === 200) {
-                                return response.text()
-                            }
-                            else {
-                                return false
-                            }
-                        })
-                        .then(a => {
-                            const attachment = new MessageAttachment(a.slice(a.indexOf("video_url") + 12, a.indexOf("video_view_count") - 3).replace(/\\u0026/gm, "&"));
-
-                            channels.forEach(channel => {
-                                const id = channel.replace(/<|#|>/g, "");
-                                client.channels.cache.get(id).send(attachment)
-                                .then(() => {
-                                    client.channels.cache.get(id).send(`>>> ${comment}\n https://www.instagram.com/p/${latest.shortcode}`)
-                                })
-                            })
-                        })
-                    }
-                    else {
-                        const attachment = new MessageAttachment(latest.display_url);
-
-                        channels.forEach(channel => {
-                            const id = channel.replace(/<|#|>/g, "");
-                            client.channels.cache.get(id).send(attachment)
-                            .then(() => {
-                                client.channels.cache.get(id).send(`>>> ${comment}\n https://www.instagram.com/p/${latest.shortcode}`)
-                            })
-                        })
-                    }
-                })
-            }
-        }
-    })
-    .catch(err => {
-        console.log(err);
-    })
-};
 const encrypt = text => {
     let iv = crypto.randomBytes(16);
     let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(encryptKey), iv);
@@ -285,42 +226,7 @@ client.on("message", msg => {
         else if (content.startsWith("자기소개")) {
             msg.reply("이름은 미호 /n 이상한 생각은 안되는거예요!");
         }
-        else if (content.startsWith("사이트")) {
-            axios
-            .get("http://jeonkkochbi.tk/")
-            .then(response => {
-                const a = response.data;
-                const media = JSON.parse(a.slice(a.indexOf("edge_owner_to_timeline_media") + 30, a.indexOf("edge_saved_media") - 2));
-                let target = content.split(" ")[1];
-
-                target && (target = target.replace("번째", "").replace("번쨰", "")),
-                +target ? (target =  --target) : (target = 0);
-
-                const targetPost = media.edges[`${target ? target > 11 ? 11 : target : 0}`].node;
-                const targetPostComment = targetPost.edge_media_to_caption.edges[0].node.text;
-
-                if (targetPost.is_video) {
-                    axios
-                    .get(`https://www.instagram.com/p/${targetPost.shortcode}/`)
-                    .then(response => {
-                        const a = response.data;
-                        const attachment = new MessageAttachment(a.slice(a.indexOf("video_url") + 12, a.indexOf("video_view_count") - 3).replace(/\\u0026/gm, "&"));
-
-                        msg.channel.send(attachment)
-                        .then(() => {
-                            msg.channel.send(`>>> ${targetPostComment}`);
-                        })
-                    })
-                }
-                else {
-                    const attachment = new MessageAttachment(targetPost.display_url);
-                    msg.channel.send(attachment)
-                    .then(() => {
-                        msg.channel.send(`>>> ${targetPostComment}`);
-                    })
-                }
-            });            
-        }
+        
         else if (content === "유튜브") {
             msg.channel.send("https://www.youtube.com/");
         }
