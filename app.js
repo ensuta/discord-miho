@@ -1,11 +1,11 @@
-const {Client, MessageAttachment} = require('discord.js');
+const Discord = require('discord.js');
 const fetch = require("node-fetch");
 const crypto = require("crypto");
 const fs = require("fs");
 const math = require("mathjs");
 const token = require("./token.json");
 const files = require("./files.json");
-const client = new Client();
+const client = new Discord.Client();
 const encryptKey = 'aDogWlsHxuRWLMwz5zkVguZboXn9CXYJ';
 const blacklist = [];
 const badwords = /words|to|block/gi;
