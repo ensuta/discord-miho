@@ -125,7 +125,7 @@ client.on("message", msg => {
         }
     }
 
-    if (content.startsWith("미호야") || content.startsWith("호야") || content.startsWith("귀요미야") {
+    if (content.startsWith("미호야") || content.startsWith("호야") || content.startsWith("귀요미야")) {
         const author = msg.author;
         const authorid = author.id;
         if(blacklist.includes(authorid)) return;
