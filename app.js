@@ -1,7 +1,6 @@
 const {Client, MessageAttachment} = require('discord.js');
 const fetch = require("node-fetch");
 const crypto = require("crypto");
-const ytdl = require("ytdl-core");
 const fs = require("fs");
 const math = require("mathjs");
 const token = require("./token.json");
@@ -138,7 +137,7 @@ client.on("message", msg => {
         const member = user && msg.guild.member(user);
         content = content.slice(4);
 
-        // bad word blocker
+        // 나쁜 말 탐지견
         if (badwords.test(content)) {
             return msg.reply("바르고 고운 말 사용하는거예요!");
         }
@@ -149,12 +148,12 @@ client.on("message", msg => {
             msg.channel.send(pickImg(ranCat));
         }
 
-        // Help
+        // 도움!
         else if (content === "도와줘") {
             msg.channel.send("[미호야 or 호야] [명령어] 구조로 이루어져 있는거예요.\n말해 [문자] : 봇이 한 말을 따라 하는거예요. 마지막에 -지워를 붙이면 해당 메시지를 지우고 따라 하는거예요\n정렬해줘 [배열] : Quick Sort로 배열을 정렬해주는거예요.\n[내쫓아 or 밴] [@유저] [문자(밴 사유, 선택)] : 순서대로 kick, ban인 거예요.\n역할 [행동(추가 / 삭제)] [@유저] [역할 이름] : 유저의 역할을 관리하는거예요\n인스타 [n번째(생략 가능)] : 인스타그램을 게시글을 표시해주는거예요. 마지막에 (숫자)번째를 추가하면 해당 게시물을 보여주는거예요.\n유튜브 : 유튜브를 켜주는거예요.\n타이머 [시간(n시간 n분 n초)] : 설정한 시간 뒤에 알림을 보내주는거예요.\n암호 [행동(생성 / 해독)] [문자열] : 문자열을 암호화, 복화화해주는거예요.\n날씨 : 기상청에서 받은 중기예보를 알려주는거예요.\n랜덤 [최소 숫자] [최대 숫자] : 최소 숫자와 최대 숫자 사이의 수 중 하나를 무작위로 뽑아주는거예요.\n계산 [수식] : 해당 수식을 계산해주는거예요.\n(단위변환 or 단위 변환) [변환할 항목] [단위] : 단위를 변환해주는거예요. 변환할 항목엔 숫자와 단위, 단위엔 단위만 입력하시면 되는거예요.\n소수 [숫자](번째) : [숫자]번째 소수를 알려줄꺼예요.\n게임 : 주사위, 동전, 가위바위보\n제비뽑기 [@유저] : 유저 중 한 명만 당첨되는 거예요. 반드시 2인 이상 언급해야 하는거예요."
 		)}
 
-        // Greeting, Farewell
+        // 인사 
         else if (content === "안녕") {
             msg.react("안녕하신거예요")
             .then(() => {
@@ -168,60 +167,6 @@ client.on("message", msg => {
             })
         }
 
-
-        // notification
-        else if (content.startsWith("알림")) {
-            const splitted = content.split(" ");
-            let action = splitted[1];
-
-            if (action === "추가") {
-                if (splitted[2]) {
-                    let channel = splitted[2].match(/<#(.[0-9]+)>/g);
-                    if (!channel) {return msg.reply("올바른 채널을 입력해주시는거예요.");}
-                    const path = "./channel.txt";
-                    channel = channel[0].replace(/<|#|>/g, "");
-    
-                    try {
-                        if (fs.existsSync(path)) {
-                            fs.appendFile(path, `!!${channel}`, function (err) {
-                                if (err) {
-                                    console.log(err),
-                                    msg.reply("채널 추가에 실패했어요오~ 😢");
-                                    return;
-                                };
-                                console.log(`new channel saved${channel}`),
-                                client.channels.cache.get(channel).send(`성공적으로 알림 채널로 등록한거예요!\n채널 ID : ${channel}`)
-                                .then(() => {
-                                    msg.reply("완료!")
-                                })
-                            });
-                        }
-                        else {
-                            fs.writeFile(path, channel, function (err) {
-                                if (err) {
-                                    console.log(err),
-                                    msg.reply("채널 추가에 실패했어요오~ 😢");
-                                    return;
-                                };
-                                console.log(`new channel saved${channel}`),
-                                client.channels.cache.get(channel).send(`성공적으로 알림 채널로 등록했어요.\n채널 ID : ${channel}`)
-                                .then(() => {
-                                    msg.reply("완료!")
-                                })
-                            });
-                        }
-                    }
-                    catch (err) {
-                        console.log(err);
-                        msg.reply("채널 추가에 실패했어요오~ 😢")
-                    }
-                }
-                else {
-                    msg.reply("올바른 채널을 입력해주시는거예요")
-                }
-            }
-        }
-
         // Info
         else if (content.startsWith("자기소개")) {
             msg.reply("이름은 미호 /n 이상한 생각은 안되는거예요!");
@@ -229,25 +174,6 @@ client.on("message", msg => {
         
         else if (content === "유튜브") {
             msg.channel.send("https://www.youtube.com/");
-        }
-        
-        // Music
-        else if (content.startsWith("재생해줘")) {
-            const uri = content.split(" ")[1];
-            if (!uri) return msg.reply("재생할 주소를 입력해주시는거예요.");
-    
-            const voiceChannel = msg.member.voice.channel;
-    
-            if (!voiceChannel) {
-                return msg.reply("음성 채팅방에 들어가셔야 재생할 수 있는거예요.");
-            }
-    
-            voiceChannel.join().then(connection => {
-                const stream = ytdl(uri, {filter: "audioonly"});
-                const dispatcher = connection.play(stream);
-    
-                dispatcher.on("end", () => voiceChannel.leave());
-            });
         }
 
         // Extra Functions
@@ -269,7 +195,7 @@ client.on("message", msg => {
                 }
             }
             else {
-                msg.reply("``지은아 말해 [말할 내용]``이 올바른 사용법인 거예요.")
+                msg.reply("``미호야 말해 [말할 내용]``이 올바른 사용법인 거예요.")
             }
         }
         else if (content === "집합시켜") {
@@ -291,7 +217,7 @@ client.on("message", msg => {
                 }
             }
             else {
-                msg.reply("``지은아 정렬해줘 [배열]``로 정렬할 수 있는거예요.")
+                msg.reply("``미호야 정렬해줘 [배열]``로 정렬할 수 있는거예요.")
             }
         }
         else if (content.startsWith("암호")) {
@@ -350,7 +276,7 @@ client.on("message", msg => {
                 msg.reply(Math.round(Math.random() * (max - min)) + min)
             }
             else {
-                msg.reply("``지은아 랜덤 [최소 숫자] [최대 숫자]``가 올바른 사용법인거예요.")
+                msg.reply("``미호야 랜덤 [최소 숫자] [최대 숫자]``가 올바른 사용법인거예요.")
             }
         }
         else if (content.startsWith("계산")) {
@@ -370,10 +296,11 @@ client.on("message", msg => {
                 }
             }
             else {
-                msg.reply("``지은아 계산 [수식]``이 올바른 사용법인거예요.");
+                msg.reply("``미호야 계산 [수식]``이 올바른 사용법인거예요.");
             }
         }
-        else if (content.startsWith("단위변환") || content.startsWith("단위 변환")) {
+        
+		else if (content.startsWith("단위변환") || content.startsWith("단위 변환")) {
             const split = content.replace("단위 변환", "단위변환").split(" ");
             if (split.length === 3) {
                 try {
@@ -384,7 +311,7 @@ client.on("message", msg => {
                 }
             }
             else {
-                msg.reply("``지은아 (단위변환 or 단위 변환) [변환할 항목] [단위]``가 올바른 사용법이 되는거예요.");
+                msg.reply("``미호야 (단위변환 or 단위 변환) [변환할 항목] [단위]``가 올바른 사용법이 되는거예요.");
             }
         }
         else if (content.startsWith("소수")) {
@@ -404,11 +331,11 @@ client.on("message", msg => {
                 });
             }
             else {
-                msg.reply("``지은아 소수 [숫자](번째)``가 올바른 사용법인거예요.");
+                msg.reply("``미호야 소수 [숫자](번째)``가 올바른 사용법인거예요.");
             }
         }
 
-        // weather
+        // 날씨
         else if (content === "날씨") {
             const date = () => {
                 const now = new Date();
@@ -438,16 +365,18 @@ client.on("message", msg => {
             })
         }
 
-        // mini games
+        // 미니게임
         else if (content === "주사위") {
             const result = Math.floor(Math.random() * 5 + 1);
             msg.reply(`${result === 1 ? "⚀ (1)" : result === 2 ? "⚁ (2)" : result === 3 ? "⚂ (3)" : result === 4 ? "⚃ (4)" : result === 5 ? "⚄ (5)" : "⚅ (6)"}`);
         }
-        else if (content === "동전") {
+        
+		else if (content === "동전") {
             const result = Math.round(Math.random());
             msg.reply(`${result ? "앞" : "뒤"}`);
         }
-        else if (content === "가위바위보") {
+        
+		else if (content === "가위바위보") {
             const arr = ["✊", "✌️", "✋"];
             const choose = Math.round(Math.random() * 2);
             const filter = (reaction, user) => {
@@ -505,7 +434,7 @@ client.on("message", msg => {
             }
         }
 
-        // Moderation
+        // 역할 부여
         else if (content.startsWith("역할")) {
             if (!user) return msg.reply("누굴요?");
 
@@ -554,7 +483,9 @@ client.on("message", msg => {
                 msg.reply("그런 사람은 없어요. 😥")
             }
         }
-        else if (content.startsWith("밴") || content.startsWith("내쫓아")) {
+        
+		// 밴 기능 
+		else if (content.startsWith("밴") || content.startsWith("내쫓아")) {
             if (user) {
                 const reason = content.match(/ /g)[1];
                 if (member) {
