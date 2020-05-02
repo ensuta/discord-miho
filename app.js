@@ -125,7 +125,7 @@ client.on("message", msg => {
         }
     }
 
-    if (content.startsWith("미호야") || content.startsWith("호야")) {
+    if (content.startsWith("미호야") || content.startsWith("호야") || content/startsWith("귀요미야") {
         const author = msg.author;
         const authorid = author.id;
         if(blacklist.includes(authorid)) return;
@@ -140,7 +140,7 @@ client.on("message", msg => {
 
         // 도움!
         else if (content === "도와줘") {
-            msg.channel.send("[미호야 or 호야] [명령어] 구조로 이루어져 있는거예요.\n말해 [문자] : 봇이 한 말을 따라 하는거예요. 마지막에 -지워를 붙이면 해당 메시지를 지우고 따라 하는거예요\n정렬해줘 [배열] : Quick Sort로 배열을 정렬해주는거예요.\n역할 [행동(추가 / 삭제)] [@유저] [역할 이름] : 유저의 역할을 관리하는거예요.\n유튜브 : 유튜브를 켜주는거예요.\n타이머 [시간(n시간 n분 n초)] : 설정한 시간 뒤에 알림을 보내주는거예요.\n암호 [행동(생성 / 해독)] [문자열] : 문자열을 암호화, 복화화해주는거예요.\n날씨 : 기상청에서 받은 중기예보를 알려주는거예요.\n랜덤 [최소 숫자] [최대 숫자] : 최소 숫자와 최대 숫자 사이의 수 중 하나를 무작위로 뽑아주는거예요.\n소수 [숫자](번째) : [숫자]번째 소수를 알려줄꺼예요."
+            msg.channel.send("``[미호야 or 호야] [명령어]`` 구조로 이루어져 있는거예요.\n``말해 [문자]`` : 봇이 한 말을 따라 하는거예요. 마지막에 ``-지워``를 붙이면 해당 메시지를 지우고 따라 하는거예요\n``정렬해줘 [배열]`` : Quick Sort로 배열을 정렬해주는거예요.\n``역할 [행동(추가 / 삭제)] [@유저] [역할 이름]`` : 유저의 역할을 관리하는거예요.\n유튜브 : 유튜브를 켜주는거예요.\n``타이머 [시간(n시간 n분 n초)]`` : 설정한 시간 뒤에 알림을 보내주는거예요.\n``암호 [행동(생성 / 해독)] [문자열]`` : 문자열을 암호화, 복화화해주는거예요.\n``소수 [숫자](번째)`` : [숫자]번째 소수를 알려줄꺼예요. \n``게임 동전, 가위바위보, 주사위``로 게임을 할 수 있는거예요."
 		)}
 
         // 인사 
@@ -151,17 +151,19 @@ client.on("message", msg => {
             msg.react("잘 가는거예요")
         }
 
-        // Info
+        // 자기소개
         else if (content.startsWith("자기소개")) {
-            msg.reply("이름은 미호 /n 이상한 생각은 안되는거예요!");
+            msg.reply("이름은 미호! /n이상한 생각은 안되는거예요!");
         }
         
         else if (content === "유튜브") {
             msg.channel.send("https://www.youtube.com/");
         }
 
-        // Extra Functions
-        else if (content.startsWith("말해")) {
+        // 추가 기능
+        
+		//대답하기
+		else if (content.startsWith("말해")) {
             if (content.split(" ").length >= 2) {
                 if (content.slice(-3) === "-지워") {
                     msg.channel.send(content.slice(0, -3).replace("말해 ", ""))
@@ -182,10 +184,14 @@ client.on("message", msg => {
                 msg.reply("``미호야 말해 [말할 내용]``이 올바른 사용법인 거예요.")
             }
         }
-        else if (content === "집합시켜") {
+        
+		//집합시키기
+		else if (content === "집합시켜") {
             msg.channel.send(`@everyone ${author}님이 집합하시랍니다!`)
         }
-        else if (content.startsWith("정렬해줘")) {
+        
+		//수열생성
+		else if (content.startsWith("정렬해줘")) {
             const arrRegex = content.match(/\[(.*)\]/g);
             if (arrRegex) {
                 const array = arrRegex[0];
@@ -204,7 +210,9 @@ client.on("message", msg => {
                 msg.reply("``미호야 정렬해줘 [배열]``로 정렬할 수 있는거예요.")
             }
         }
-        else if (content.startsWith("암호")) {
+        
+		//암호
+		else if (content.startsWith("암호")) {
             const split = content.split(" ");
             const action = split[1];
 
@@ -223,7 +231,9 @@ client.on("message", msg => {
                 msg.reply("암호 [행동(생성, 해독)] [문자열]로 암호를 생성하고 해독할 수 있는거예요")
             }
         }
-        else if (content.startsWith("타이머")) {
+        
+		//타이머 기능
+		else if (content.startsWith("타이머")) {
             const time = content.replace("타이머 ", "").split(" ");
             const regex = /^([0-9]+)(분|초|시간)$/;
             const timeToMs = (time, unit) => {
@@ -247,8 +257,10 @@ client.on("message", msg => {
                 msg.reply("올바른 시간을 입력해주셔야 하는거예요.")
             }
         }
-        else if (content === "잘 자" || content === "잘자") {
-            msg.reply("안녕히 주무시는거예요 \n https://youtube.com/")
+        
+		//안부인사 
+		else if (content === "잘 자" || content === "잘자") {
+            msg.reply("안녕히 주무시는거예요 \nhttps://www.youtube.com/watch?v=9VPLBCmhCiE")
         }
 
         // 소수 찾기 
@@ -273,47 +285,21 @@ client.on("message", msg => {
             }
         }
 
-        // 날씨
-        else if (content === "날씨") {
-            const date = () => {
-                const now = new Date();
-                const format = number => {
-                    return `${number < 10 ? `0${number}` : number}`
-                };
-                let hhmm = 0;
-
-                if (now.getHours() <= 6) {
-                    now.setDate(now.getDate() - 1);
-                    hhmm = "1800"
-                }
-
-                const month = now.getMonth() + 1;
-                const date = now.getDate();
-                hhmm = hhmm ? hhmm : now.getHours() < 18 ? "0600" : "1800";
-
-                return `${now.getFullYear()}${format(month)}${format(date)}${hhmm}`
-            };
-
-            fetch(`http://apis.data.go.kr/1360000/MidFcstInfoService/getMidFcst?serviceKey=${keys.weatherApi}&pageNo=1&numOfRows=10&dataType=JSON&stnId=108&tmFc=${date()}`)
-            .then(response => {
-                return response.json()
-            })
-            .then(data => {
-                msg.channel.send(data.response.body.items.item[0].wfSv)
-            })
-        }
-
         // 미니게임
-        else if (content === "주사위") {
+        
+		//주사위
+		else if (content === "주사위") {
             const result = Math.floor(Math.random() * 5 + 1);
-            msg.reply(`${result === 1 ? "⚀ (1)" : result === 2 ? "⚁ (2)" : result === 3 ? "⚂ (3)" : result === 4 ? "⚃ (4)" : result === 5 ? "⚄ (5)" : "⚅ (6)"}`);
+            msg.reply(`${result === 1 ? "주사위에서 ⚀ (1)이 나온거예요" : result === 2 ? "주사위에서 ⚁ (2)가 나온거예요" : result === 3 ? "주사위에서 ⚂ (3)이 나온거예요" : result === 4 ? "주사위에서 ⚃ (4)가 나온거예요" : result === 5 ? "주사위에서 ⚄ (5)가 나온거예요" : "주사위에서 ⚅ (6)이 나온거예요"}`);
         }
         
+		//동전
 		else if (content === "동전") {
             const result = Math.round(Math.random());
-            msg.reply(`${result ? "앞" : "뒤"}`);
+            msg.reply(`${result ? "동전 앞 면이 나온거예요" : "동전 뒤 면이 나온거예요"}`);
         }
         
+		//가위바위보
 		else if (content === "가위바위보") {
             const arr = ["✊", "✌️", "✋"];
             const choose = Math.round(Math.random() * 2);
@@ -356,7 +342,9 @@ client.on("message", msg => {
                 
 	        });
         }
-        else if (content.startsWith("제비뽑기")) {
+        
+		//제비뽑기
+		else if (content.startsWith("제비뽑기")) {
             const users = msg.mentions.users;
             const size = users.size;
             
@@ -477,7 +465,7 @@ client.on("message", msg => {
                                     })
                                 }
                                 else {
-                                    msg.reply("작업을 취소합니다.")
+                                    msg.reply("작업을 취소하는거예요.")
                                 }
                             })
                             .catch(() => {
@@ -494,7 +482,9 @@ client.on("message", msg => {
                 msg.reply("누굴요?")
             }
         }
-        else {
+        
+		//명령여 Not Found
+		else {
             msg.react("❌")
             .then(() => {
                 msg.reply("찾을 수 없는 명령어네요. 😥\n``미호아 도와줘`` 명령어를 이용해 명령어 목록을 확인할 수 있는거예요.");
