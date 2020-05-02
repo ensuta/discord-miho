@@ -2,9 +2,7 @@ const Discord = require('discord.js');
 const fetch = require("node-fetch");
 const crypto = require("crypto");
 const fs = require("fs");
-const math = require("mathjs");
 const token = require("./token.json");
-const files = require("./files.json");
 const client = new Discord.Client();
 const encryptKey = 'aDogWlsHxuRWLMwz5zkVguZboXn9CXYJ';
 const blacklist = [];
@@ -15,9 +13,7 @@ let latestInsta = null;
 const pickRandom = array => {
     return array[Math.round(Math.random() * (array.length - 1))];
 };
-const pickImg = array => {
-    return pickRandom(array).replace("[gfy]", "https://giant.gfycat.com/").replace("[zgfy]", "https://zippy.gfycat.com/").replace("[ten]", "https://tenor.com/view/").replace("[fgfy]", "https://fat.gfycat.com/").replace("[tgfy]", "https://thumbs.gfycat.com/");
-};
+
 const quickSort = (arr, l, r) => {
     let i;
 
@@ -142,12 +138,6 @@ client.on("message", msg => {
             return msg.reply("바르고 고운 말 사용하는거예요!");
         }
 
-        // If user typed nothing
-        if (content === "") {
-            const ranCat = files[pickRandom(gifCategory)];
-            msg.channel.send(pickImg(ranCat));
-        }
-
         // 도움!
         else if (content === "도와줘") {
             msg.channel.send("[미호야 or 호야] [명령어] 구조로 이루어져 있는거예요.\n말해 [문자] : 봇이 한 말을 따라 하는거예요. 마지막에 -지워를 붙이면 해당 메시지를 지우고 따라 하는거예요\n정렬해줘 [배열] : Quick Sort로 배열을 정렬해주는거예요.\n[내쫓아 or 밴] [@유저] [문자(밴 사유, 선택)] : 순서대로 kick, ban인 거예요.\n역할 [행동(추가 / 삭제)] [@유저] [역할 이름] : 유저의 역할을 관리하는거예요\n인스타 [n번째(생략 가능)] : 인스타그램을 게시글을 표시해주는거예요. 마지막에 (숫자)번째를 추가하면 해당 게시물을 보여주는거예요.\n유튜브 : 유튜브를 켜주는거예요.\n타이머 [시간(n시간 n분 n초)] : 설정한 시간 뒤에 알림을 보내주는거예요.\n암호 [행동(생성 / 해독)] [문자열] : 문자열을 암호화, 복화화해주는거예요.\n날씨 : 기상청에서 받은 중기예보를 알려주는거예요.\n랜덤 [최소 숫자] [최대 숫자] : 최소 숫자와 최대 숫자 사이의 수 중 하나를 무작위로 뽑아주는거예요.\n계산 [수식] : 해당 수식을 계산해주는거예요.\n(단위변환 or 단위 변환) [변환할 항목] [단위] : 단위를 변환해주는거예요. 변환할 항목엔 숫자와 단위, 단위엔 단위만 입력하시면 되는거예요.\n소수 [숫자](번째) : [숫자]번째 소수를 알려줄꺼예요.\n게임 : 주사위, 동전, 가위바위보\n제비뽑기 [@유저] : 유저 중 한 명만 당첨되는 거예요. 반드시 2인 이상 언급해야 하는거예요."
@@ -156,15 +146,9 @@ client.on("message", msg => {
         // 인사 
         else if (content === "안녕") {
             msg.react("안녕하신거예요")
-            .then(() => {
-                msg.channel.send(pickImg(files.hi));
-            })
         }
         else if (content === "잘 가" || content === "잘가") {
             msg.react("잘 가는거예요")
-            .then(() => {
-                msg.channel.send(pickImg(files.bye));
-            })
         }
 
         // Info
@@ -267,53 +251,7 @@ client.on("message", msg => {
             msg.reply("안녕히 주무시는거예요 \n https://youtube.com/")
         }
 
-        // math
-        else if (content.startsWith("랜덤")) {
-            const split = content.split(" ");
-            const min = +split[1];
-            const max = +split[2];
-            if (split.length === 3 && min !== NaN && max !== NaN && max > min) {
-                msg.reply(Math.round(Math.random() * (max - min)) + min)
-            }
-            else {
-                msg.reply("``미호야 랜덤 [최소 숫자] [최대 숫자]``가 올바른 사용법인거예요.")
-            }
-        }
-        else if (content.startsWith("계산")) {
-            content = content.slice(3)
-            if (content) {
-                try {
-                    const result = math.evaluate(content);
-                    const resStr = math.format(result, {precision: 14});
-                    const type = typeof(result);
-                    if (type === "function") {
-                        throw "error";
-                    }
-                    msg.reply(resStr);
-                }
-                catch (err) {
-                    msg.reply("올바른 수식을 입력해주시는거예요.");
-                }
-            }
-            else {
-                msg.reply("``미호야 계산 [수식]``이 올바른 사용법인거예요.");
-            }
-        }
-        
-		else if (content.startsWith("단위변환") || content.startsWith("단위 변환")) {
-            const split = content.replace("단위 변환", "단위변환").split(" ");
-            if (split.length === 3) {
-                try {
-                    msg.reply(math.format(math.evaluate(`${split[1]} to ${split[2]}`)), {precision: 14});
-                }
-                catch (err) {
-                    msg.reply("올바른 단위를 입력해주시는거예요.");
-                }
-            }
-            else {
-                msg.reply("``미호야 (단위변환 or 단위 변환) [변환할 항목] [단위]``가 올바른 사용법이 되는거예요.");
-            }
-        }
+        // 소수 찾기 
         else if (content.startsWith("소수")) {
             const input = content.split(" ")[1];
             let num = input ? input.replace("번째", "") : null;
