@@ -144,7 +144,7 @@ client.on("message", msg => {
 		)}
 
         // 인사 
-        else if (content === "안녕" || content === "안녕하세요" || content === "안녕하신거예요") {
+        else if (content === "안녕") || (content === "안녕하세요") || (content === "안녕하신거예요") {
             msg.react("안녕하신거예요")
         }
         else if (content === "잘 가" || content === "잘가" || content === "바이") {
@@ -153,7 +153,7 @@ client.on("message", msg => {
 
         // 자기소개
         else if (content.startsWith("자기소개")) {
-            msg.reply("미호예요! /n나쁜 말은 안되는거예요!");
+            msg.reply("미호예요! \n나쁜 말은 안되는거예요!");
         }
         
         else if (content === "유튜브") {
