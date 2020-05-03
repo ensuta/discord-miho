@@ -144,10 +144,10 @@ client.on("message", msg => {
 		)}
 
         // 인사 
-        else if (content === "안녕") || (content === "안녕하세요") || (content === "안녕하신거예요") {
+        else if (content === "안녕") {
             msg.react("안녕하신거예요")
         }
-        else if (content === "잘 가" || content === "잘가" || content === "바이") {
+        else if (content === "잘 가") {
             msg.react("잘 가는거예요")
         }
 
