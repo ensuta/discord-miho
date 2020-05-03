@@ -476,7 +476,28 @@ client.on("message", msg => {
 
 			else if (content === "뭐 해" || content === "뭐해") {
 				msg.reply("아무 것도 하지 않는 것이예요!");
+			}
+			
+			else if (content === "미호야") {
+				msg.reply("무슨 일인 것이예요?");
+			}
+			
+			else if (content === "사랑해") {
+				msg.reply("사랑해는 아직 좀 부담스러운데... 좋아해로 시작해보는거예요!")
+			}
+			
+			else if (content === "좋아해") {
+				msg.reply("순애물은 제 취향이 아닌것이예요...") 
+			}
 				
+			else if (content === "예쁘다" || content === "예쁘네") {
+				msg.reply("솔직히 제가 봐도 저는 좀 예쁜거예요^^");
+			}
+			
+			else if (content === "잘생겼다" || content === "잘생겼네") {
+				msg.reply("제가 또 연예인 뺨 치는 얼굴인거예요^^");
+			}
+			
 			else if (content.startsWith("자기소개")) {
 				msg.reply("미호예요! \n나쁜 말은 안되는거예요!");
 			}
@@ -500,23 +521,22 @@ client.on("message", msg => {
 			
 			//드립
 			
-			//이스터에그
-			else if (content === "이스터에그"){
-				msg.reply("있는지 없는지는 찾아보면 아는거예요!");
-			}
-			
-			else if (content === "엄준식"){
+			else if (content === "엄준식") {
 				msg.reply("**엄준식은 사람 이름이 아닌것이예요!**");
 			}
 			
-			else if (content === "언더테일"){
+			else if (content === "언더테일") {
 				msg.reply("와 샌즈 아시는거예요? 겁나 어.려.운.것.이.예.요!");
 			}
 			
-			else if (content === "네오암스트롱사이클론제트암스트롱포"){
+			else if (content === "네오암스트롱사이클론제트암스트롱포") {
 				msg.reply("완성도 높은 것이예요!");
 			}
-				
+			
+			//이스터에그
+			else if (content === "이스터에그") {
+				msg.reply("있는지 없는지는 찾아보면 아는거예요!");
+			}
 		//명령어 Not Found
 		else {
             msg.react("❌")
