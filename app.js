@@ -411,7 +411,7 @@ client.on("message", msg => {
         }
         
 		// 밴 기능 
-		else if (content.startsWith("밴") || content.startsWith("내쫓아") || content.startsWith("뜯어물어") {
+		else if (content.startsWith("밴") || content.startsWith("내쫓아") || content.startsWith("뜯어물어")) {
             if (user) {
                 const reason = content.match(/ /g)[1];
                 if (member) {
@@ -486,8 +486,9 @@ client.on("message", msg => {
 		
 		//대화
 		
-		else if (content === "이스터에그"{
-			
+		else if (content === "이스터에그"){
+			msg.reply("있는지 없는지는 찾아보면 아는거예요!");
+        }
 			
 		//명령여 Not Found
 		else {
