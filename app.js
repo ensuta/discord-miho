@@ -467,11 +467,11 @@ client.on("message", msg => {
 		//대화
 			//일반대화
 			else if (content === "안녕" || content === "안녕하세요" || content === "안녕하신거예요" ) {
-				msg.reply("안녕하신거예요")
+				msg.reply("안녕하신거예요");
 			}
 			
 			else if (content === "잘 가" || content === "잘가") {
-				msg.reply("잘 가는거예요")
+				msg.reply("잘 가는거예요");
 			}
 
         
@@ -481,7 +481,7 @@ client.on("message", msg => {
 			
 			//특수기능대화
 			else if (content === "잘 자" || content === "잘자") {
-				msg.reply("안녕히 주무시는거예요 \nhttps://www.youtube.com/watch?v=9VPLBCmhCiE")
+				msg.reply("안녕히 주무시는거예요 \nhttps://www.youtube.com/watch?v=9VPLBCmhCiE");
 			}
         
 			else if (content === "유튜브") {
@@ -497,9 +497,20 @@ client.on("message", msg => {
 			else if (content === "이스터에그"){
 				msg.reply("있는지 없는지는 찾아보면 아는거예요!");
 			}
-		
-		
-		//명령여 Not Found
+			
+			else if (content === "엄준식"){
+				msg.reply("**엄준식은 사람 이름이 아닌것이예요!**");
+			}
+			
+			else if (content === "언더테일"){
+				msg.reply("와 샌즈 아시는거예요? 겁나 어.려.운.것.이.예.요!");
+			}
+			
+			else if (content === "네오암스트롱사이클론제트암스트롱포"){
+				msg.reply("완성도 높은 것이예요!");
+			}
+				
+		//명령어 Not Found
 		else {
             msg.react("❌")
             .then(() => {
