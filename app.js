@@ -139,7 +139,7 @@ client.on("message", msg => {
         }
 
         // 도움!
-        else if (content === "도와줘") {
+        else if (content === "도와줘" || content === "도움말") {
             msg.channel.send("``[미호야] [명령어]`` 구조로 이루어져 있는거예요.\n``말해 [문자]`` : 봇이 한 말을 따라 하는거예요. 마지막에 ``-지워``를 붙이면 해당 메시지를 지우고 따라 하는거예요\n``정렬해줘 [배열]`` : Quick Sort로 배열을 정렬해주는거예요.\n``역할 [행동(추가 / 삭제)] [@유저] [역할 이름]`` : 유저의 역할을 관리하는거예요.\n``타이머 [시간(n시간 n분 n초)]`` : 설정한 시간 뒤에 알림을 보내주는거예요.\n``암호 [행동(생성 / 해독)] [문자열]`` : 문자열을 암호화, 복화화해주는거예요.\n``소수 [숫자](번째)`` : [숫자]번째 소수를 알려줄꺼예요. \n게임은``동전, 가위바위보, 주사위``로 게임을 할 수 있는거예요."
 		)}
 
@@ -212,7 +212,7 @@ client.on("message", msg => {
                 }
             }
             else {
-                msg.reply("암호 [행동(생성, 해독)] [문자열]로 암호를 생성하고 해독할 수 있는거예요")
+                msg.reply("``암호 [행동(생성, 해독)] [문자열]``로 암호를 생성하고 해독할 수 있는거예요")
             }
         }
         
@@ -238,7 +238,7 @@ client.on("message", msg => {
                 })
             }
             catch (err) {
-                msg.reply("올바른 시간을 입력해주셔야 하는거예요.")
+                msg.reply("``[숫자]시간 [숫자]분 [숫자]초``로 올바른 시간을 입력해주셔야 하는거예요.")
             }
         }
 
@@ -466,13 +466,6 @@ client.on("message", msg => {
 		
 		//대화
 			//일반대화
-			
-			//특수기능대화
-			else if (content === "잘 자" || content === "잘자") {
-				msg.reply("안녕히 주무시는거예요 \nhttps://www.youtube.com/watch?v=9VPLBCmhCiE")
-			}
-			
-			
 			else if (content === "안녕" || content === "안녕하세요" || content === "안녕하신거예요" ) {
 				msg.reply("안녕하신거예요")
 			}
@@ -484,6 +477,11 @@ client.on("message", msg => {
         
 			else if (content.startsWith("자기소개")) {
 				msg.reply("미호예요! \n나쁜 말은 안되는거예요!");
+			}
+			
+			//특수기능대화
+			else if (content === "잘 자" || content === "잘자") {
+				msg.reply("안녕히 주무시는거예요 \nhttps://www.youtube.com/watch?v=9VPLBCmhCiE")
 			}
         
 			else if (content === "유튜브") {
