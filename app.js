@@ -467,21 +467,48 @@ client.on("message", msg => {
 		//대화
 			//일반대화
 			else if (content === "안녕" || content === "안녕하세요" || content === "안녕하신거예요" ) {
-				msg.reply("안녕하신거예요")
+				msg.reply("안녕하신거예요!");
 			}
 			
 			else if (content === "잘 가" || content === "잘가") {
-				msg.reply("잘 가는거예요")
+				msg.reply("잘 가시라는거예요!");
 			}
 
-        
+			else if (content === "뭐 해" || content === "뭐해") {
+				msg.reply("아무 것도 하지 않는 것이예요!");
+			}
+			
+			else if (content === "미호야") {
+				msg.reply("무슨 일인 것이예요?");
+			}
+			
+			else if (content === "사랑해") {
+				msg.reply("사랑해는 아직 좀 부담스러운데... 좋아해로 시작해보는거예요!")
+			}
+			
+			else if (content === "좋아해") {
+				msg.reply("순애물은 제 취향이 아닌것이예요...") 
+			}
+				
+			else if (content === "예쁘다" || content === "예쁘네") {
+				msg.reply("솔직히 제가 봐도 저는 좀 예쁜거예요^^");
+			}
+			
+			else if (content === "잘생겼다" || content === "잘생겼네") {
+				msg.reply("제가 또 연예인 뺨 치는 얼굴인거예요^^");
+			}
+			
 			else if (content.startsWith("자기소개")) {
 				msg.reply("미호예요! \n나쁜 말은 안되는거예요!");
 			}
 			
+			else if (content.startsWith("이름")) {
+				msg.reply("미호라고 해요! \n잘 부탁드려요!");
+			}
+			
 			//특수기능대화
 			else if (content === "잘 자" || content === "잘자") {
-				msg.reply("안녕히 주무시는거예요 \nhttps://www.youtube.com/watch?v=9VPLBCmhCiE")
+				msg.reply("안녕히 주무시는거예요 \nhttps://www.youtube.com/watch?v=9VPLBCmhCiE");
 			}
         
 			else if (content === "유튜브") {
@@ -491,15 +518,26 @@ client.on("message", msg => {
 			else if (content.startsWith("집")) {
 				msg.channel.send("http://jeonkkochbi.tk/");
 			}
+			
 			//드립
 			
+			else if (content === "엄준식") {
+				msg.reply("**엄준식은 사람 이름이 아닌것이예요!**");
+			}
+			
+			else if (content === "언더테일") {
+				msg.reply("와 샌즈 아시는거예요? 겁나 어.려.운.것.이.예.요!");
+			}
+			
+			else if (content === "네오암스트롱사이클론제트암스트롱포") {
+				msg.reply("완성도 높은 것이예요!");
+			}
+			
 			//이스터에그
-			else if (content === "이스터에그"){
+			else if (content === "이스터에그") {
 				msg.reply("있는지 없는지는 찾아보면 아는거예요!");
 			}
-		
-		
-		//명령여 Not Found
+		//명령어 Not Found
 		else {
             msg.react("❌")
             .then(() => {
