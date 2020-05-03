@@ -467,16 +467,22 @@ client.on("message", msg => {
 		//대화
 			//일반대화
 			else if (content === "안녕" || content === "안녕하세요" || content === "안녕하신거예요" ) {
-				msg.reply("안녕하신거예요");
+				msg.reply("안녕하신거예요!");
 			}
 			
 			else if (content === "잘 가" || content === "잘가") {
-				msg.reply("잘 가는거예요");
+				msg.reply("잘 가시라는거예요!");
 			}
 
-        
+			else if (content === "뭐 해" || content === "뭐해") {
+				msg.reply("아무 것도 하지 않는 것이예요!");
+				
 			else if (content.startsWith("자기소개")) {
 				msg.reply("미호예요! \n나쁜 말은 안되는거예요!");
+			}
+			
+			else if (content.startsWith("이름")) {
+				msg.reply("미호라고 해요! \n잘 부탁드려요!");
 			}
 			
 			//특수기능대화
@@ -491,6 +497,7 @@ client.on("message", msg => {
 			else if (content.startsWith("집")) {
 				msg.channel.send("http://jeonkkochbi.tk/");
 			}
+			
 			//드립
 			
 			//이스터에그
