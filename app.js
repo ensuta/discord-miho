@@ -144,7 +144,7 @@ client.on("message", msg => {
 		)}
 
         // 인사 
-        else if (content === "안녕" || content === "안녕하세요" || cotent === "안녕하신거예요") {
+        else if (content === "안녕") {
             msg.reply("안녕하신거예요")
         }
         else if (content === "잘 가" || content === "잘가") {
