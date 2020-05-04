@@ -78,12 +78,6 @@ client.on("ready", () => {
             name: "미호야 도와줘 - 명령어 확인"
         }
     });
-    
-    fetchInsta("init"),
-
-    setInterval(() => {
-        fetchInsta("check")
-    }, 1800000)
 });
 
 client.on("message", msg => {
