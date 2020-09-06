@@ -1,2 +1,6 @@
 # token #
 env/
+
+# hosting #
+ProcFile
+requreiements.txt
