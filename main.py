@@ -1,11 +1,6 @@
 import asyncio,discord,os
 from discord.ext import commands
 
-token_path = os.path.dirname( os.path.abspath(__file__ ) )+"/env/token.txt"
-t = open(token_path,"r",encoding="utf-8")
-token = t.read().split()[0]
-print("Token_key : ",token)
-
 # 접두사 & 상태Text
 gametxt = discord.Game('레벨6 시프트 실험')
 bot = commands.Bot(command_prefix='미호야 ',status=discord.Status.online,activity=gametxt)
@@ -37,4 +32,4 @@ async def 엄준식(ctx):
 async def 샌즈(ctx):
     await ctx.send('와 샌즈 아시는구나! 겁·나·어·렵·습·니·다')
 
-bot.run(token)
+bot.run('Njk5NTEwMTYxNzcyOTA0NDQ5.XpVbmg.dbnYiGDNnH4T0ZvrlC6anJpt2x8')
