@@ -1,10 +1,31 @@
-import asyncio,discord,os
+import discord
+import asyncio
+import os
+import wikipedia
 from discord.ext import commands
+from discord.ext.commands import bot
+from chatbot import Chat, register_call
 
 # 접두사 & 상태Text
 gametxt = discord.Game('레벨6 시프트 실험')
-bot = commands.Bot(command_prefix='미호야 ',status=discord.Status.online,activity=gametxt)
+bot = commands.Bot(command_prefix='병신아 ', status=discord.Status.online, activity=gametxt)
 
+#보안
+bot.remove_command("help")
+tokenkey = 'TOKEN_VAULE_IS_HERE'
+
+#핸들러
+startup_extensions = ['Cogs.Purge','Cogs.Bye','Cogs.Slfboom','Cogs.Ping','Cogs.Badwrd','Cogs.Hello','Cogs.Repeat']
+os.chdir('.\Cogs')
+
+if __name__ == '__main__':
+    for extension in startup_extensions:
+        try:
+            bot.load_extension(extension)
+        except Exception as err:
+            print('ERROR : {}\n{}'.format(extension,'{}: {}'.format(type(err).__name__, err)))
+
+#콘솔
 @bot.event
 async def on_ready():
     print('Logged in as')
@@ -12,24 +33,17 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
-@bot.command()
-async def 안녕(ctx):
-    await ctx.send('안녕하신거예요!')
+#리로드
+@bot.command(aliases=['리로드'])
+async def load_commands(ctx, extension):
+    bot.load_extension(f"Cogs.{extension}")
+    await ctx.send(f":white_check_mark: {extension}을(를) 로드했다!")
 
-@bot.command()
-async def 잘가(ctx):
-    await ctx.send('조심히 가는거예요!')
+#언로드
+@bot.command(aliases=['언로드'])
+async def unload_commands(ctx, extension):
+    bot.unload_extension(f"Cogs.{extension}")
+    await ctx.send(f":white_check_mark: {extension}을(를) 언로드했다!")
 
-@bot.command()
-async def 뭐해(ctx):
-    await ctx.send('미호는 조금씩 성장하고 있다구요!')
-
-@bot.command()
-async def 엄준식(ctx):
-    await ctx.send('엄\n준\n식')
-
-@bot.command()
-async def 샌즈(ctx):
-    await ctx.send('와 샌즈 아시는구나! 겁·나·어·렵·습·니·다')
-
-bot.run('Njk5NTEwMTYxNzcyOTA0NDQ5.XpVbmg.dbnYiGDNnH4T0ZvrlC6anJpt2x8')
+#토큰
+bot.run(tokenkey)
