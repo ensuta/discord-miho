@@ -11,7 +11,7 @@ class Bye(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=['잘가', '바이', '빠이'])
+    @commands.command(name='작별인사',aliases=['잘가', '바이', '빠이'])
     async def bye(self, ctx):
         await ctx.send('꺼져')
 

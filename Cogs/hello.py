@@ -10,7 +10,7 @@ class Hello(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=['안녕', '안녕하세요', '하이'])
+    @commands.command(name='인사',aliases=['안녕', '안녕하세요', '하이'])
     async def hello(self, ctx):
         await ctx.send('인사 잘~하네')
 
