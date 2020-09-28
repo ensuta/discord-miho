@@ -1,18 +1,20 @@
 import discord
-import asyncio
-import os
-import wikipedia
+import random
+import json
 from discord.ext import commands
 from discord.ext.commands import bot
-from chatbot import Chat, register_call
+
+with open('./data/chats.json', "r", encoding='UTF-8') as json_file:
+    responses = json.load(json_file)
 
 class Hello(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+            
 
-    @commands.command(name='인사',aliases=['안녕', '안녕하세요', '하이'])
+    @commands.command(name='인사',aliases=responses["Hellos"][0]["input"])
     async def hello(self, ctx):
-        await ctx.send('인사 잘~하네')
+        await ctx.send(f'{random.choice(responses["Hellos"][0]["output"])}')
 
 def setup(bot):
     bot.add_cog(Hello(bot))
