@@ -60,7 +60,7 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error):
     await ctx.send(f"{random.choice(json_data['Excepts'])}")
-    print(error)
+    print(time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), error)
     pass
 
 #리로드
