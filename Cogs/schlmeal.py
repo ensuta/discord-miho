@@ -29,7 +29,7 @@ class Schlmeal(commands.Cog):
             meal = scmeal[0].DDISH_NM.replace("<br/>", "\n")
             await ctx.send(f"교명 : ``{schoolname}``\n날짜 : ``{dates}``\n메뉴 :\n``{meal}``")
         except:
-            await ctx.send("오늘은 급식 없어 급식충새끼야")
+            await ctx.send(f"날짜 : ``{dates}``\n오늘은 급식 없어 급식충새끼야")
 
 
 def setup(bot):

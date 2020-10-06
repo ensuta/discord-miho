@@ -32,12 +32,13 @@ bot.remove_command("help")
 #핸들러
 commandlist = [
     "Cogs.bye",
-    "Cogs.badwrd",
     "Cogs.goodwrd",
     "Cogs.hello",
     "Cogs.repeat",
     "Cogs.schlmeal",
-    "Cogs.purge"]
+    "Cogs.purge",
+    "Cogs.badwrd"
+    ]
 
 os.chdir(".\Cogs")
 if __name__ == "__main__":
@@ -59,7 +60,7 @@ async def on_ready():
 #예외 처리
 @bot.event
 async def on_command_error(ctx, error):
-    await ctx.send(f"{random.choice(json_data['Excepts'])}")
+    await ctx.send(f'{random.choice(json_data["Excepts"])}')
     print(time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), error)
     pass
 
@@ -86,7 +87,7 @@ template_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "d
 chats = Chat(template_file_path)
 
 # 검색 기능
-@bot.command(name="찾기", aliases=json_data["Commands"][0]["Searchs"], pass_context=True)
+@bot.command(name="찾기", aliases=json_data["Excepts"], pass_context=True)
 async def search(ctx, *, message):
     await ctx.send("찾고 있다 기다려봐...")
     result = chats.respond(message)

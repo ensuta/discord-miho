@@ -5,3 +5,4 @@ Cogs/data/configs.json
 # hosting #
 
 # dump files #
+Cogs/__pycache__/
