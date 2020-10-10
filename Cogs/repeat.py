@@ -16,7 +16,7 @@ class Repeat(commands.Cog):
     async def repeat(self, ctx, *, content):
         await ctx.send(f"{content}")
 
-    @commands.command(name="도배")
+    @commands.command(name="도배", aliases=["호출"])
     async def dobe(self, ctx, *, tags, times=0.2):
         await ctx.send(f"{tags}\n{tags}\n{tags}\n{tags}\n``{times}초 뒤 재전송 0/10``")
         time.sleep(times)

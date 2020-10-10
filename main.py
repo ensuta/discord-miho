@@ -37,7 +37,8 @@ commandlist = [
     "Cogs.repeat",
     "Cogs.schlmeal",
     "Cogs.purge",
-    "Cogs.badwrd"
+    "Cogs.badwrd",
+    "Cogs.wlslang"
     ]
 
 os.chdir(".\Cogs")
@@ -61,7 +62,7 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error):
     await ctx.send(f'{random.choice(json_data["Excepts"])}')
-    print(time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), error)
+    print (time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), error)
     pass
 
 #리로드

@@ -1,0 +1,35 @@
+{
+    "Verbs":[{
+            "ang": "넣다 | 들어 있게 하거나 들어가게 하다 ",
+            "tweit": "시간낭비 하다"
+    }],
+    
+    "Nouns":[{
+            "vish": "나 | 자기 자신을 지칭하는 말",
+            "najome": "어른",
+            "mujome": "아저씨 | 부모와 같은 항렬에 있는 아버지의 친형제를 제외한 남자를 이르는 말",
+            "neksun": "확률",
+            "valigu": "만세",
+            "giltong": "검사",
+            "myungbak": "부정부패",
+            "embi": "쥐",
+            "emiebi": "예의범절",
+            "konglish": "멍청함",
+            "yudam": "퇴장",
+            "ubnose": "서양",
+            "ribtais": "동양",
+            "usan": "날씨",
+            "asibal": "꿈 | 수면 시 경험하는 일련의 영상",
+            "munje": "노예",
+            "killem": "제국주의",
+            "careneedy": "비누 | 때를 빼거나 씻어 낼 때 쓰는 물건",
+            "uno": "넘어지다",
+            "dammy": "합격",
+            "zenbu": "전부",
+            "zenkaino": "아이돌"
+    }],
+
+    "ProNouns":[{
+
+    }]
+}
