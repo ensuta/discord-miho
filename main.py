@@ -9,16 +9,16 @@ import time
 import json
 
 # json 불러오기
-with open(".\Cogs\data\chats.json", "r", encoding="UTF-8") as json_file:
+with open("Cogs/data/chats.json", "r", encoding="UTF-8") as json_file:
     json_data = json.load(json_file)
-with open(".\Cogs\data\configs.json", "r", encoding="UTF-8") as cfg_data:
+with open("Cogs/data/configs.json", "r", encoding="UTF-8") as cfg_data:
     configs = json.load(cfg_data)    
 #-----------------설정--------------------------------------------------------
 tokenkey = configs["Tokenkey"]
 mudtxt = configs["Mudtxt"]
-prefix = configs["Prefixs"]
+prefix = json_data["Prefixs"]
 wikipedia.set_lang("ko")
-#
+# Change \Cogs\data\configs.json
 #-----------------------------------------------------------------------------
 
 
@@ -41,7 +41,7 @@ commandlist = [
     "Cogs.wlslang"
     ]
 
-os.chdir(".\Cogs")
+os.chdir("./Cogs")
 if __name__ == "__main__":
     for extension in commandlist:
         try:
@@ -56,6 +56,7 @@ async def on_ready():
     print(f"USERNAME : {bot.user.name}")
     print(f"I   D : {bot.user.id}")
     print("---------------------")
+    print("환영합니다")
 
 
 #예외 처리
@@ -72,6 +73,8 @@ async def load_commands(ctx, extension):
     bot.load_extension(f"Cogs.{extension}")
     await ctx.send(f":white_check_mark: {extension}을(를) 리로드했다!")
 
+# --------------------------Cogs handler 실패---------------------------------------------
+# 검색 인식
 @register_call("whoIs")
 def who_is(query, session_id="general"):
     try:
@@ -84,14 +87,11 @@ def who_is(query, session_id="general"):
                 pass
     return f"나도 {query}가 뭔진 잘 모르겠다"
 
-template_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "list.template")
-chats = Chat(template_file_path)
-
 # 검색 기능
 @bot.command(name="찾기", aliases=json_data["Excepts"], pass_context=True)
 async def search(ctx, *, message):
     await ctx.send("찾고 있다 기다려봐...")
-    result = chats.respond(message)
+    result = Chat("Cogs/data/list.template").respond(message)
     try:
         if(len(result) <= 2048):
             embed = discord.Embed(
@@ -114,5 +114,5 @@ async def search(ctx, *, message):
     except:
         await ctx.send("검색에 실패함 ㅅㄱ")
         
-#토큰
+# 토큰 동작
 bot.run(tokenkey)

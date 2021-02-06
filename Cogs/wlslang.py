@@ -11,15 +11,15 @@ class akmalang(commands.Cog):
         self.bot = bot
             
 
-    @commands.command(name='노가리안명사',aliases=["악마의말명사"])
+    @commands.command(name='노가리안명사',aliases=["찐따어명사"])
     async def langnoun(self, ctx, *, words):
         await ctx.send(responses["Nouns"][0][words])
 
-    @commands.command(name='노가리안동사',aliases=["악마의말동사"])
+    @commands.command(name='노가리안동사',aliases=["찐따어동사"])
     async def langverb(self, ctx, *, words):
         await ctx.send(responses["Verbs"][0][words])
 
-    @commands.command(name='노가리안고유명사', aliases=["악마의말고유명사"])
+    @commands.command(name='노가리안고유명사', aliases=["찐따어고유명사"])
     async def langpronoun(self, ctx, *, words):
         await ctx.send(responses["ProNouns"][0][words])
 
