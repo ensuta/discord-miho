@@ -1,5 +1,4 @@
 from chatbot import Chat, register_call
-from discord.ext.commands import bot
 from discord.ext import commands
 import discord
 import os
@@ -24,7 +23,7 @@ wikipedia.set_lang("ko")
 
 # 접두사 & 상태Text
 gametxt = discord.Game(mudtxt)
-bot = commands.Bot(command_prefix=prefix, status=discord.Status.online, activity=gametxt)
+bot = commands.Bot(command_prefix=prefix, status=discord.Status.online, activity=gametxt, intents=discord.Intents.all())
 
 #보안
 bot.remove_command("help")
@@ -69,8 +68,7 @@ async def on_command_error(ctx, error):
 #리로드
 @bot.command(aliases=["리로드"])
 async def load_commands(ctx, extension):
-    bot.unload_extension(f"Cogs.{extension}")
-    bot.load_extension(f"Cogs.{extension}")
+    bot.reload_extension(f"Cogs.{extension}")
     await ctx.send(f":white_check_mark: {extension}을(를) 리로드했다!")
 
 # --------------------------Cogs handler 실패---------------------------------------------
