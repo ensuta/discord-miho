@@ -6,13 +6,13 @@ import time
 import json
 
 with open('./data/chats.json', "r", encoding='UTF-8') as json_file:
-    responses = json.load(json_file)
+    responses = json.load(json_file)["Commands"][0]
 
 class Repeat(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="말해", aliases=responses["Commands"][0]["Repeats"])
+    @commands.command(name="말해", aliases=responses["Repeats"])
     async def repeat(self, ctx, *, content):
         await ctx.send(f"{content}")
 
@@ -39,6 +39,8 @@ class Repeat(commands.Cog):
         await ctx.send(f"{tags}\n{tags}\n{tags}\n{tags}\n``{times}초 뒤 재전송 9/10``")
         time.sleep(times)
         await ctx.send(f"{tags}\n{tags}\n{tags}\n{tags}\n``10회 도배 완료``")
+        print (time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), "'{tags}'라는 내용이 도배됨")
+        pass
         
 def setup(bot):
     bot.add_cog(Repeat(bot))

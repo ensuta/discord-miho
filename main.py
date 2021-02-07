@@ -1,4 +1,3 @@
-from chatbot import Chat, register_call
 from discord.ext import commands
 import discord
 import os
@@ -61,8 +60,8 @@ async def on_ready():
 #예외 처리
 @bot.event
 async def on_command_error(ctx, error):
-    await ctx.send(f'{random.choice(json_data["Excepts"])}')
     print (time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), error)
+    await ctx.send(f'{random.choice(json_data["Excepts"])}')
     pass
 
 #리로드
@@ -70,47 +69,6 @@ async def on_command_error(ctx, error):
 async def load_commands(ctx, extension):
     bot.reload_extension(f"Cogs.{extension}")
     await ctx.send(f":white_check_mark: {extension}을(를) 리로드했다!")
-
-# --------------------------Cogs handler 실패---------------------------------------------
-# 검색 인식
-@register_call("whoIs")
-def who_is(query, session_id="general"):
-    try:
-        return wikipedia.summary(query)
-    except Exception:
-        for new_query in wikipedia.search(query):
-            try:
-                return wikipedia.summary(new_query)
-            except Exception:
-                pass
-    return f"나도 {query}가 뭔진 잘 모르겠다"
-
-# 검색 기능
-@bot.command(name="찾기", aliases=json_data["Excepts"], pass_context=True)
-async def search(ctx, *, message):
-    await ctx.send("찾고 있다 기다려봐...")
-    result = Chat("Cogs/data/list.template").respond(message)
-    try:
-        if(len(result) <= 2048):
-            embed = discord.Embed(
-                title="검색 결과", description=result, color=(0xD700F5))
-            await ctx.send(embed=embed)
-        else:
-            embedList = []
-            n = 2048
-            embedList = [result[i:i+n] for i in range(0, len(result), n)]
-            for num, item in enumerate(embedList, start=1):
-                if(num == 1):
-                    embed = discord.Embed(
-                        title="검색 결과", description=item, color=(0xD700F5))
-                    embed.set_footer(text="페이지 {}".format(num))
-                    await ctx.send(embed=embed)
-                else:
-                    embed = discord.Embed(description=item, color=(0xD700F5))
-                    embed.set_footer(text="페이지 {}".format(num))
-                    await ctx.send(embed=embed)
-    except:
-        await ctx.send("검색에 실패함 ㅅㄱ")
         
 # 토큰 동작
 bot.run(tokenkey)

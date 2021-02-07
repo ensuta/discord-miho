@@ -1,6 +1,6 @@
 import discord
-import os
 import json
+import time
 import random
 from discord.ext import commands
 from discord.ext.commands import bot
@@ -13,8 +13,10 @@ class Goodwrd(commands.Cog):
         self.bot = bot
 
     @commands.command(name='명언', aliases=responses["input"])
-    async def badword(self, ctx):
-            
-        await ctx.send(f'``{random.choice(responses["output"])}``')
+    async def badword(self, ctx, answer = random.choice(responses["output"])):
+        await ctx.send(f'``{answer}``')
+        print (time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), answer)
+        pass
+    
 def setup(bot):
     bot.add_cog(Goodwrd(bot))

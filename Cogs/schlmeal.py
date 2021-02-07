@@ -32,20 +32,18 @@ locallist = {
 '경남': 'S10', 
 '제주': 'T10'}
 
-rquirereply = {}
-
 class Schlmeal(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
  
     @commands.command(name="급식", aliases=responses["Commands"][0]["Meals"])
     async def listener(self, localname, schoolname):
+        format(localname, schoolname)
         localcode = locallist[localname]
         scinfo = await neis.schoolInfo(ATPT_OFCDC_SC_CODE=localcode, SCHUL_NM=schoolname)
         AE = scinfo[0].ATPT_OFCDC_SC_CODE  # 교육청코드
         SE = scinfo[0].SD_SCHUL_CODE  # 학교코드
-        return AE
-        return SE
+        return AE, SE
 
     async def meal(self, ctx, AE, SE, localname, schoolname):
         try:            
