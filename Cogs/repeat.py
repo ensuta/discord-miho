@@ -16,7 +16,7 @@ class Repeat(commands.Cog):
     async def repeat(self, ctx, *, content):
         await ctx.send(f"{content}")
 
-    @commands.command(name="도배", aliases=["호출"])
+    @commands.command(name="도배", aliases=["호출","도배해","호출해","불러"])
     async def dobe(self, ctx, *, tags, times=0.2):
         await ctx.send(f"{tags}\n{tags}\n{tags}\n{tags}\n``{times}초 뒤 재전송 0/10``")
         time.sleep(times)
@@ -39,7 +39,7 @@ class Repeat(commands.Cog):
         await ctx.send(f"{tags}\n{tags}\n{tags}\n{tags}\n``{times}초 뒤 재전송 9/10``")
         time.sleep(times)
         await ctx.send(f"{tags}\n{tags}\n{tags}\n{tags}\n``10회 도배 완료``")
-        print (time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), "'{tags}'라는 내용이 도배됨")
+        print (time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), f"'{tags}'라는 내용이 도배됨")
         pass
         
 def setup(bot):

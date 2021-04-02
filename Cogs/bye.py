@@ -1,4 +1,3 @@
-from chatbot import Chat, register_call
 from discord.ext.commands import bot
 from discord.ext import commands
 import random

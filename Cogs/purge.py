@@ -18,7 +18,7 @@ class Purge(commands.Cog):
             return await ctx.send("입력하신 값은 숫자가 아니다.")
         except discord.errors.Forbidden:
             return await ctx.send("봇의 권한이 부족하다.")
-        print (time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), "{limit}개의 메세지 삭제됨")
+        print (time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), f"{limit}개의 메세지 삭제됨")
         return await ctx.send(f"{limit}개의 메시지가 삭제됐다.", delete_after=3)
 
 

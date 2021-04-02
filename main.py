@@ -2,7 +2,6 @@ from discord.ext import commands
 import discord
 import os
 import random
-import wikipedia
 import time
 import json
 
@@ -15,7 +14,6 @@ with open("Cogs/data/configs.json", "r", encoding="UTF-8") as cfg_data:
 tokenkey = configs["Tokenkey"]
 mudtxt = configs["Mudtxt"]
 prefix = json_data["Prefixs"]
-wikipedia.set_lang("ko")
 # Change \Cogs\data\configs.json
 #-----------------------------------------------------------------------------
 
