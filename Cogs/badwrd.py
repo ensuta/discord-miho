@@ -11,9 +11,8 @@ with open('./data/chats.json', "r", encoding='UTF-8') as json_file:
 class Badwrd(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        
 
-    @commands.command(name='나쁜말',aliases=responses["input"])
+    @commands.command(name='나쁜말', aliases=responses["input"])
     async def badword(self, ctx, answer = random.choice(responses["output"])):
         await ctx.send(f'{answer}')
         print (time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), answer)

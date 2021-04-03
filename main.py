@@ -14,7 +14,8 @@ with open("Cogs/data/configs.json", "r", encoding="UTF-8") as cfg_data:
 tokenkey = configs["Tokenkey"]
 mudtxt = configs["Mudtxt"]
 prefix = json_data["Prefixs"]
-# Change \Cogs\data\configs.json
+# Change /Cogs/data/configs.json
+# Change /Cogs/data/chats.json
 #-----------------------------------------------------------------------------
 
 

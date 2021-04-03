@@ -12,7 +12,6 @@ class Hello(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
             
-
     @commands.command(name='인사',aliases=responses["input"])
     async def hello(self, ctx, answer = random.choice(responses["output"])):
         await ctx.send(f'{answer}')
