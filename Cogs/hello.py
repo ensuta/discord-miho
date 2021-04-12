@@ -13,7 +13,8 @@ class Hello(commands.Cog):
         self.bot = bot
             
     @commands.command(name='인사',aliases=responses["input"])
-    async def hello(self, ctx, answer = random.choice(responses["output"])):
+    async def hello(self, ctx):
+        answer = random.choice(responses["output"])
         await ctx.send(f'{answer}')
         print (time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), answer)
         pass

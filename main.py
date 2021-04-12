@@ -35,7 +35,8 @@ commandlist = [
     "Cogs.schlmeal",
     "Cogs.purge",
     "Cogs.badwrd",
-    "Cogs.wlslang"
+    "Cogs.wlslang",
+    "Cogs.Today"
     ]
 
 os.chdir("./Cogs")
@@ -49,13 +50,12 @@ if __name__ == "__main__":
 #콘솔
 @bot.event
 async def on_ready():
+    print("----------------------")
     print("Logged in as")
     print(f"USERNAME : {bot.user.name}")
     print(f"I   D : {bot.user.id}")
     print("---------------------")
-    print("환영합니다")
-
-
+    
 #예외 처리
 @bot.event
 async def on_command_error(ctx, error):

@@ -1,5 +1,4 @@
 import discord
-import discord
 import random
 import json
 import time
@@ -14,7 +13,8 @@ class Bye(commands.Cog):
         self.bot = bot
 
     @commands.command(name='작별인사',aliases=responses["input"])
-    async def bye(self, ctx, answer = random.choice(responses["output"])):
+    async def bye(self, ctx):
+        answer = random.choice(responses["output"])
         await ctx.send(f'{answer}')
         print (time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), answer)
         pass

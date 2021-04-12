@@ -13,7 +13,8 @@ class Badwrd(commands.Cog):
         self.bot = bot
 
     @commands.command(name='나쁜말', aliases=responses["input"])
-    async def badword(self, ctx, answer = random.choice(responses["output"])):
+    async def badword(self, ctx):
+        answer = random.choice(responses["output"])
         await ctx.send(f'{answer}')
         print (time.strftime(f'%m-%d-%H:%M:%S', time.localtime(time.time())), answer)
         pass
